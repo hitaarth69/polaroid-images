@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Polaroid Images — Professional Layout Studio</title>
+<link rel="stylesheet" href="style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Loader -->
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader-inner">
+    <div class="loader-polaroid-anim">
+      <div class="lpa-frame"><div class="lpa-img"></div><div class="lpa-bar"></div></div>
+    </div>
+    <div class="loader-brand">
+      <span class="loader-title" id="loaderTitle"></span>
+      <span class="loader-sub">Professional Layout Studio</span>
+    </div>
+    <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+    <div class="loader-percent" id="loaderPercent">0%</div>
+  </div>
+</div>
+
+<!-- Tutorial Overlay -->
+<div class="tutorial-overlay" id="tutorialOverlay" style="display:none">
+  <div class="tutorial-box">
+    <div class="tut-step-indicator" id="tutStepIndicator"></div>
+    <div class="tut-content" id="tutContent"></div>
+    <div class="tut-actions">
+      <button class="btn-ghost btn-sm" id="tutSkip">Skip Tour</button>
+      <button class="btn-primary btn-sm" id="tutNext">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Keyboard Shortcuts Panel -->
+<div class="shortcuts-panel" id="shortcutsPanel" style="display:none">
+  <div class="sp-header"><h3>Keyboard Shortcuts</h3><button class="sp-close" id="shortcutsClose">✕</button></div>
+  <div class="sp-grid">
+    <span>Ctrl+G</span><span>Generate Layout</span>
+    <span>Ctrl+S</span><span>Export / Download</span>
+    <span>Ctrl+Z</span><span>Undo</span>
+    <span>Ctrl+Y</span><span>Redo</span>
+    <span>Ctrl+=</span><span>Zoom In</span>
+    <span>Ctrl+-</span><span>Zoom Out</span>
+    <span>Ctrl+0</span><span>Fit to Screen</span>
+    <span>Ctrl+A</span><span>Select All Frames</span>
+    <span>Delete</span><span>Delete Selected Frame</span>
+    <span>Esc</span><span>Deselect / Close</span>
+    <span>?</span><span>Show This Panel</span>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="site-header" id="siteHeader">
+  <div class="header-left">
+    <div class="header-logo">
+      <div class="header-polaroid-icon"><div class="hpi-img"></div><div class="hpi-bar"></div></div>
+      <span class="header-brand">Polaroid<span class="accent">Images</span></span>
+    </div>
+  </div>
+  <nav class="header-nav">
+    <a href="#studio" class="nav-link active">Studio</a>
+    <a href="#past-works" class="nav-link">Past Works</a>
+    <a href="#" class="nav-link" id="shortcutsBtn">Shortcuts</a>
+  </nav>
+  <div class="header-right">
+    <div class="undo-redo-btns">
+      <button class="icon-btn" id="undoBtn" title="Undo (Ctrl+Z)" disabled>↩</button>
+      <button class="icon-btn" id="redoBtn" title="Redo (Ctrl+Y)" disabled>↪</button>
+    </div>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+      <span class="theme-icon-dark">◑</span>
+      <span class="theme-icon-light">○</span>
+    </button>
+    <button class="btn-primary btn-sm" id="headerExportBtn">Export</button>
+  </div>
+</header>
+
+<!-- Main App -->
+<main class="app-main" id="studio">
+
+  <!-- LEFT PANEL -->
+  <aside class="control-panel" id="controlPanel">
+    <div class="panel-scroll">
+
+      <!-- Tab Navigation -->
+      <div class="panel-tabs">
+        <button class="ptab active" data-tab="upload">Upload</button>
+        <button class="ptab" data-tab="layout">Layout</button>
+        <button class="ptab" data-tab="style">Style</button>
+        <button class="ptab" data-tab="text">Text</button>
+        <button class="ptab" data-tab="bg">BG</button>
+      </div>
+
+      <!-- TAB: UPLOAD -->
+      <div class="tab-content active" id="tab-upload">
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">01</span><h3>Upload Images</h3></div>
+          <div class="drop-zone" id="dropZone">
+            <div class="dz-inner">
+              <div class="dz-icon">⬡</div>
+              <p class="dz-text">Drop images here</p>
+              <p class="dz-sub">or click to browse · any format</p>
+              <input type="file" id="fileInput" multiple accept="image/*" class="file-input-hidden"/>
+            </div>
+          </div>
+          <div class="thumbnail-grid" id="thumbnailGrid"></div>
+          <div class="upload-actions" id="uploadActions" style="display:none">
+            <button class="btn-ghost btn-sm" id="clearImagesBtn">Clear All</button>
+            <span class="upload-count" id="uploadCount">0 images</span>
+          </div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">02</span><h3>Image Filters</h3></div>
+          <div class="filter-presets" id="filterPresets">
+            <button class="filter-btn active" data-filter="none">Normal</button>
+            <button class="filter-btn" data-filter="grayscale">B&W</button>
+            <button class="filter-btn" data-filter="sepia">Sepia</button>
+            <button class="filter-btn" data-filter="vintage">Vintage</button>
+            <button class="filter-btn" data-filter="cool">Cool</button>
+            <button class="filter-btn" data-filter="warm">Warm</button>
+            <button class="filter-btn" data-filter="fade">Fade</button>
+            <button class="filter-btn" data-filter="dramatic">Drama</button>
+          </div>
+          <div class="ctrl-inline mt8">
+            <label>Brightness</label>
+            <div class="range-row"><input type="range" class="ctrl-range" id="imgBrightness" value="100" min="0" max="200"/><span class="range-val" id="imgBrightnessVal">100%</span></div>
+          </div>
+          <div class="ctrl-inline">
+            <label>Contrast</label>
+            <div class="range-row"><input type="range" class="ctrl-range" id="imgContrast" value="100" min="0" max="200"/><span class="range-val" id="imgContrastVal">100%</span></div>
+          </div>
+          <div class="ctrl-inline">
+            <label>Saturation</label>
+            <div class="range-row"><input type="range" class="ctrl-range" id="imgSaturation" value="100" min="0" max="200"/><span class="range-val" id="imgSaturationVal">100%</span></div>
+          </div>
+          <div class="ctrl-inline">
+            <label>Blur (px)</label>
+            <div class="range-row"><input type="range" class="ctrl-range" id="imgBlur" value="0" min="0" max="20"/><span class="range-val" id="imgBlurVal">0px</span></div>
+          </div>
+          <div class="ctrl-inline">
+            <label>Apply Filter To</label>
+            <select class="ctrl-select" id="filterApplyTo">
+              <option value="all">All Images</option>
+              <option value="selected">Selected Frame</option>
+            </select>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB: LAYOUT -->
+      <div class="tab-content" id="tab-layout">
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">03</span><h3>Page Size</h3></div>
+          <select class="ctrl-select" id="pageSizeSelect">
+            <option value="a4">A4 (8.27×11.69 in)</option>
+            <option value="a3">A3 (11.69×16.54 in)</option>
+            <option value="12x18" selected>12×18 inch</option>
+            <option value="letter">Letter (8.5×11 in)</option>
+            <option value="legal">Legal (8.5×14 in)</option>
+            <option value="tabloid">Tabloid (11×17 in)</option>
+            <option value="square10">Square 10×10 in</option>
+            <option value="square12">Square 12×12 in</option>
+            <option value="custom">Custom Size</option>
+          </select>
+          <div class="custom-size-row" id="customSizeRow" style="display:none">
+            <div class="ctrl-inline"><label>Width (in)</label><input type="number" class="ctrl-input" id="customWidth" value="12" min="1" max="60" step="0.1"/></div>
+            <div class="ctrl-inline"><label>Height (in)</label><input type="number" class="ctrl-input" id="customHeight" value="18" min="1" max="60" step="0.1"/></div>
+          </div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">04</span><h3>Layout Style</h3></div>
+          <div class="layout-style-grid">
+            <button class="layout-btn active" data-style="classic">⊞ Classic</button>
+            <button class="layout-btn" data-style="offset">⊟ Offset</button>
+            <button class="layout-btn" data-style="angled">⊠ Angled</button>
+            <button class="layout-btn" data-style="scatter">✦ Scatter</button>
+            <button class="layout-btn" data-style="diagonal">╲ Diagonal</button>
+            <button class="layout-btn" data-style="masonry">▤ Masonry</button>
+          </div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">05</span><h3>Grid Settings</h3></div>
+          <div class="ctrl-row">
+            <div class="ctrl-inline"><label>Rows</label><input type="number" class="ctrl-input highlight-field" id="rowsInput" value="3" min="1" max="10"/></div>
+            <div class="ctrl-inline"><label>Columns</label><input type="number" class="ctrl-input highlight-field" id="colsInput" value="3" min="1" max="10"/></div>
+          </div>
+          <div class="ctrl-inline"><label>Spacing (in)</label><input type="number" class="ctrl-input" id="spacingInput" value="0.25" min="0" max="2" step="0.05"/></div>
+          <div class="ctrl-inline">
+            <label>Snap to Grid</label>
+            <div class="toggle-switch"><input type="checkbox" id="snapGrid" checked/><label for="snapGrid" class="toggle-label"></label></div>
+          </div>
+          <div class="ctrl-inline">
+            <label>Show Guides</label>
+            <div class="toggle-switch"><input type="checkbox" id="showGuides" checked/><label for="showGuides" class="toggle-label"></label></div>
+          </div>
+          <div class="ctrl-inline">
+            <label>Show Rulers</label>
+            <div class="toggle-switch"><input type="checkbox" id="showRulers" checked/><label for="showRulers" class="toggle-label"></label></div>
+          </div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">06</span><h3>Frame Size</h3></div>
+          <div class="ctrl-row">
+            <div class="ctrl-inline"><label>Frame W (in)</label><input type="number" class="ctrl-input" id="frameWidth" value="3.5" min="1" max="10" step="0.05"/></div>
+            <div class="ctrl-inline"><label>Frame H (in)</label><input type="number" class="ctrl-input" id="frameHeight" value="4.25" min="1" max="12" step="0.05"/></div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-inline"><label>Image W (in)</label><input type="number" class="ctrl-input" id="imgAreaWidth" value="3.1" min="0.5" max="10" step="0.05"/></div>
+            <div class="ctrl-inline"><label>Image H (in)</label><input type="number" class="ctrl-input" id="imgAreaHeight" value="3.1" min="0.5" max="10" step="0.05"/></div>
+          </div>
+          <div class="ctrl-inline"><label>Top Margin (in)</label><input type="number" class="ctrl-input" id="marginTop" value="0.2" min="0" max="2" step="0.05"/></div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">07</span><h3>Presets</h3></div>
+          <div class="presets-grid" id="presetsGrid">
+            <button class="preset-btn" data-preset="wedding">💍 Wedding</button>
+            <button class="preset-btn" data-preset="travel">✈ Travel</button>
+            <button class="preset-btn" data-preset="birthday">🎂 Birthday</button>
+            <button class="preset-btn" data-preset="minimal">◻ Minimal</button>
+            <button class="preset-btn" data-preset="vintage">📷 Vintage</button>
+            <button class="preset-btn" data-preset="moody">🌑 Moody</button>
+          </div>
+          <div class="preset-actions">
+            <button class="btn-ghost btn-sm" id="savePresetBtn">Save Current</button>
+            <button class="btn-ghost btn-sm" id="loadPresetBtn">Load File</button>
+            <input type="file" id="presetFileInput" accept=".json" style="display:none"/>
+          </div>
+          <div class="saved-presets" id="savedPresets"></div>
+        </section>
+      </div>
+
+      <!-- TAB: STYLE -->
+      <div class="tab-content" id="tab-style">
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">08</span><h3>Frame Style</h3></div>
+          <div class="frame-style-grid">
+            <button class="frame-style-btn active" data-fs="classic" title="Classic Polaroid">▭ Classic</button>
+            <button class="frame-style-btn" data-fs="instant" title="Instant Film">▬ Instant</button>
+            <button class="frame-style-btn" data-fs="rounded" title="Rounded Square">▢ Rounded</button>
+            <button class="frame-style-btn" data-fs="filmstrip" title="Filmstrip">⊞ Film</button>
+            <button class="frame-style-btn" data-fs="double" title="Double Border">▣ Double</button>
+            <button class="frame-style-btn" data-fs="minimal" title="Minimal">▪ Minimal</button>
+          </div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">09</span><h3>Border & Shadow</h3></div>
+          <div class="ctrl-inline"><label>Frame Color</label><input type="color" class="ctrl-color" id="frameColor" value="#ffffff"/></div>
+          <div class="ctrl-inline"><label>Border Thickness</label><input type="number" class="ctrl-input" id="borderThickness" value="0" min="0" max="20" step="0.5"/></div>
+          <div class="ctrl-inline"><label>Border Color</label><input type="color" class="ctrl-color" id="borderColor" value="#cccccc"/></div>
+          <div class="ctrl-inline">
+            <label>Border Opacity</label>
+            <div class="range-row"><input type="range" class="ctrl-range" id="borderOpacity" value="100" min="0" max="100"/><span class="range-val" id="borderOpacityVal">100%</span></div>
+          </div>
+          <div class="ctrl-inline"><label>Corner Radius (px)</label><input type="number" class="ctrl-input" id="cornerRadius" value="2" min="0" max="40" step="1"/></div>
+          <div class="ctrl-inline">
+            <label>Shadow</label>
+            <div class="toggle-switch"><input type="checkbox" id="shadowToggle" checked/><label for="shadowToggle" class="toggle-label"></label></div>
+          </div>
+          <div class="ctrl-inline">
+            <label>Shadow Intensity</label>
+            <div class="range-row"><input type="range" class="ctrl-range" id="shadowIntensity" value="40" min="0" max="100"/><span class="range-val" id="shadowIntensityVal">40%</span></div>
+          </div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">10</span><h3>Color Palette</h3></div>
+          <div class="palette-grid" id="paletteGrid">
+            <button class="palette-btn" data-palette="pastel" title="Pastel">Pastel</button>
+            <button class="palette-btn" data-palette="moody" title="Moody Dark">Moody</button>
+            <button class="palette-btn" data-palette="vintage" title="Vintage Cream">Vintage</button>
+            <button class="palette-btn" data-palette="neon" title="Neon Pop">Neon</button>
+            <button class="palette-btn" data-palette="minimal" title="Pure White">Minimal</button>
+            <button class="palette-btn" data-palette="earth" title="Earth Tones">Earth</button>
+          </div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">11</span><h3>Captions</h3></div>
+          <div class="ctrl-inline">
+            <label>Show Captions</label>
+            <div class="toggle-switch"><input type="checkbox" id="captionToggle" checked/><label for="captionToggle" class="toggle-label"></label></div>
+          </div>
+          <div class="caption-controls" id="captionControls">
+            <div class="ctrl-inline">
+              <label>Same for All</label>
+              <div class="toggle-switch"><input type="checkbox" id="captionSameToggle"/><label for="captionSameToggle" class="toggle-label"></label></div>
+            </div>
+            <div class="ctrl-inline" id="globalCaptionRow" style="display:none">
+              <label>Caption Text</label>
+              <input type="text" class="ctrl-input" id="globalCaption" placeholder="Enter caption..."/>
+            </div>
+            <div class="ctrl-row">
+              <div class="ctrl-inline"><label>Font Size</label><input type="number" class="ctrl-input" id="captionFontSize" value="14" min="8" max="48"/></div>
+              <div class="ctrl-inline"><label>Color</label><input type="color" class="ctrl-color" id="captionColor" value="#333333"/></div>
+            </div>
+            <div class="ctrl-inline">
+              <label>Font Family</label>
+              <select class="ctrl-select" id="captionFont">
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Syne">Syne</option>
+                <option value="DM Mono">DM Mono</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+              </select>
+            </div>
+            <div class="ctrl-inline">
+              <label>Font Style</label>
+              <div class="font-style-btns">
+                <button class="fs-btn" id="captionBold" title="Bold">B</button>
+                <button class="fs-btn" id="captionItalic" title="Italic"><i>I</i></button>
+                <button class="fs-btn" id="captionUnderline" title="Underline"><u>U</u></button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB: TEXT (Free Text) -->
+      <div class="tab-content" id="tab-text">
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">12</span><h3>Free Text</h3></div>
+          <p class="cp-hint">Add text elements anywhere on the canvas.</p>
+          <div class="ctrl-inline"><label>Text Content</label><textarea class="ctrl-textarea" id="freeTextContent" placeholder="Enter text..."></textarea></div>
+          <div class="ctrl-row">
+            <div class="ctrl-inline"><label>Font Size</label><input type="number" class="ctrl-input" id="freeTextSize" value="24" min="8" max="200"/></div>
+            <div class="ctrl-inline"><label>Color</label><input type="color" class="ctrl-color" id="freeTextColor" value="#ffffff"/></div>
+          </div>
+          <div class="ctrl-inline"><label>Font Family</label>
+            <select class="ctrl-select" id="freeTextFont">
+              <option value="Playfair Display">Playfair Display</option>
+              <option value="Syne">Syne</option>
+              <option value="DM Mono">DM Mono</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Arial">Arial</option>
+            </select>
+          </div>
+          <div class="ctrl-inline"><label>Rotation (°)</label><input type="number" class="ctrl-input" id="freeTextRotation" value="0" min="-180" max="180"/></div>
+          <div class="ctrl-inline">
+            <label>Opacity</label>
+            <div class="range-row"><input type="range" class="ctrl-range" id="freeTextOpacity" value="100" min="0" max="100"/><span class="range-val" id="freeTextOpacityVal">100%</span></div>
+          </div>
+          <button class="btn-generate" id="addTextBtn"><span class="btn-gen-icon">＋</span><span>Add Text to Canvas</span></button>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">13</span><h3>Watermark</h3></div>
+          <div class="ctrl-inline">
+            <label>Show Watermark</label>
+            <div class="toggle-switch"><input type="checkbox" id="watermarkToggle"/><label for="watermarkToggle" class="toggle-label"></label></div>
+          </div>
+          <div id="watermarkControls" style="display:none">
+            <div class="ctrl-inline"><label>Text</label><input type="text" class="ctrl-input" id="watermarkText" placeholder="© Your Name"/></div>
+            <div class="ctrl-row">
+              <div class="ctrl-inline"><label>Size</label><input type="number" class="ctrl-input" id="watermarkSize" value="16" min="8" max="60"/></div>
+              <div class="ctrl-inline"><label>Color</label><input type="color" class="ctrl-color" id="watermarkColor" value="#ffffff"/></div>
+            </div>
+            <div class="ctrl-inline">
+              <label>Opacity</label>
+              <div class="range-row"><input type="range" class="ctrl-range" id="watermarkOpacity" value="30" min="0" max="100"/><span class="range-val" id="watermarkOpacityVal">30%</span></div>
+            </div>
+            <div class="ctrl-inline"><label>Position</label>
+              <select class="ctrl-select" id="watermarkPosition">
+                <option value="bottom-right">Bottom Right</option>
+                <option value="bottom-left">Bottom Left</option>
+                <option value="top-right">Top Right</option>
+                <option value="top-left">Top Left</option>
+                <option value="center">Center</option>
+                <option value="tiled">Tiled</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">14</span><h3>Stickers</h3></div>
+          <div class="sticker-grid" id="stickerGrid">
+            <button class="sticker-btn" data-sticker="❤">❤</button>
+            <button class="sticker-btn" data-sticker="⭐">⭐</button>
+            <button class="sticker-btn" data-sticker="🌸">🌸</button>
+            <button class="sticker-btn" data-sticker="✨">✨</button>
+            <button class="sticker-btn" data-sticker="📷">📷</button>
+            <button class="sticker-btn" data-sticker="🎨">🎨</button>
+            <button class="sticker-btn" data-sticker="🌙">🌙</button>
+            <button class="sticker-btn" data-sticker="☁">☁</button>
+            <button class="sticker-btn" data-sticker="→">→</button>
+            <button class="sticker-btn" data-sticker="★">★</button>
+            <button class="sticker-btn" data-sticker="◈">◈</button>
+            <button class="sticker-btn" data-sticker="⊞">⊞</button>
+          </div>
+          <div class="ctrl-inline mt8"><label>Sticker Size</label><input type="number" class="ctrl-input" id="stickerSize" value="40" min="12" max="200"/></div>
+        </section>
+      </div>
+
+      <!-- TAB: BACKGROUND -->
+      <div class="tab-content" id="tab-bg">
+        <section class="cp-section">
+          <div class="cp-section-head"><span class="cp-section-num">15</span><h3>Background Type</h3></div>
+          <div class="bg-type-btns">
+            <button class="bg-type-btn active" data-bg="solid">Solid</button>
+            <button class="bg-type-btn" data-bg="gradient">Gradient</button>
+            <button class="bg-type-btn" data-bg="pattern">Pattern</button>
+            <button class="bg-type-btn" data-bg="image">Image</button>
+          </div>
+
+          <!-- Solid -->
+          <div class="bg-option active" id="bg-solid">
+            <div class="ctrl-inline mt8"><label>Background Color</label><input type="color" class="ctrl-color" id="bgColor" value="#1c1b2e"/></div>
+          </div>
+
+          <!-- Gradient -->
+          <div class="bg-option" id="bg-gradient" style="display:none">
+            <div class="ctrl-row mt8">
+              <div class="ctrl-inline"><label>Color 1</label><input type="color" class="ctrl-color" id="bgGrad1" value="#1c1b2e"/></div>
+              <div class="ctrl-inline"><label>Color 2</label><input type="color" class="ctrl-color" id="bgGrad2" value="#2a1f4a"/></div>
+            </div>
+            <div class="ctrl-inline"><label>Direction</label>
+              <select class="ctrl-select" id="bgGradDir">
+                <option value="to bottom">↓ Top to Bottom</option>
+                <option value="to right">→ Left to Right</option>
+                <option value="135deg">↘ Diagonal</option>
+                <option value="radial">◎ Radial</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Pattern -->
+          <div class="bg-option" id="bg-pattern" style="display:none">
+            <div class="pattern-grid mt8">
+              <button class="pattern-btn active" data-pattern="dots">Dots</button>
+              <button class="pattern-btn" data-pattern="grid">Grid</button>
+              <button class="pattern-btn" data-pattern="lines">Lines</button>
+              <button class="pattern-btn" data-pattern="diagonal">Diagonal</button>
+              <button class="pattern-btn" data-pattern="linen">Linen</button>
+              <button class="pattern-btn" data-pattern="cork">Cork</button>
+            </div>
+            <div class="ctrl-row mt8">
+              <div class="ctrl-inline"><label>BG Color</label><input type="color" class="ctrl-color" id="bgPatternColor" value="#1c1b2e"/></div>
+              <div class="ctrl-inline"><label>Pattern Color</label><input type="color" class="ctrl-color" id="bgPatternDotColor" value="#2a2a3d"/></div>
+            </div>
+          </div>
+
+          <!-- Image -->
+          <div class="bg-option" id="bg-image" style="display:none">
+            <div class="drop-zone dz-small mt8" id="bgDropZone">
+              <div class="dz-inner">
+                <div class="dz-icon" style="font-size:1.2rem">🖼</div>
+                <p class="dz-sub">Drop background image</p>
+                <input type="file" id="bgFileInput" accept="image/*" class="file-input-hidden"/>
+              </div>
+            </div>
+            <div class="ctrl-inline">
+              <label>Opacity</label>
+              <div class="range-row"><input type="range" class="ctrl-range" id="bgImageOpacity" value="100" min="0" max="100"/><span class="range-val" id="bgImageOpacityVal">100%</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Generate (always visible bottom) -->
+      <div class="generate-bar">
+        <button class="btn-generate" id="generateBtn"><span class="btn-gen-icon">◈</span><span>Generate Layout</span></button>
+        <button class="btn-ghost btn-full mt8" id="resetBtn">Reset All</button>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- CENTER PREVIEW -->
+  <div class="preview-area" id="previewArea">
+    <div class="preview-toolbar">
+      <div class="ptb-left">
+        <span class="ptb-label">Preview</span>
+        <span class="ptb-dims" id="previewDims">—</span>
+        <span class="ptb-selected" id="selectedInfo" style="display:none"></span>
+      </div>
+      <div class="ptb-center">
+        <button class="ptb-btn" id="alignLeftBtn" title="Align Left">⫷</button>
+        <button class="ptb-btn" id="alignCenterBtn" title="Center H">⊷</button>
+        <button class="ptb-btn" id="alignRightBtn" title="Align Right">⫸</button>
+        <div class="ptb-divider"></div>
+        <button class="ptb-btn" id="deleteFrameBtn" title="Delete Frame">✕</button>
+        <button class="ptb-btn" id="duplicateFrameBtn" title="Duplicate Frame">⊕</button>
+        <button class="ptb-btn" id="lockFrameBtn" title="Lock Frame">⊘</button>
+      </div>
+      <div class="ptb-right">
+        <button class="ptb-btn" id="zoomOutBtn" title="Zoom Out">−</button>
+        <span class="ptb-zoom" id="zoomLabel">75%</span>
+        <button class="ptb-btn" id="zoomInBtn" title="Zoom In">+</button>
+        <button class="ptb-btn" id="zoomFitBtn" title="Fit to screen">⊡</button>
+      </div>
+    </div>
+
+    <div class="canvas-viewport" id="canvasViewport">
+      <div class="ruler-h" id="rulerH"></div>
+      <div class="ruler-v" id="rulerV"></div>
+      <div class="canvas-wrap" id="canvasWrap">
+        <div class="empty-state" id="emptyState">
+          <div class="es-icon">⬡</div>
+          <h2>Your canvas awaits</h2>
+          <p>Upload images and click Generate Layout.</p>
+          <button class="btn-primary mt16" id="tourBtn">Take a Tour</button>
+        </div>
+        <canvas id="mainCanvas" style="display:none"></canvas>
+      </div>
+    </div>
+
+    <!-- Caption editor popup -->
+    <div class="caption-editor-popup" id="captionEditorPopup" style="display:none">
+      <label>Caption for this frame:</label>
+      <input type="text" id="captionEditorInput" placeholder="Enter caption..."/>
+      <div class="cep-actions">
+        <button class="btn-ghost btn-xs" id="captionEditorClose">Cancel</button>
+        <button class="btn-primary btn-xs" id="captionEditorSave">Save</button>
+      </div>
+    </div>
+
+    <!-- Frame context menu -->
+    <div class="context-menu" id="contextMenu" style="display:none">
+      <button class="cm-item" id="cmEdit">✎ Edit Caption</button>
+      <button class="cm-item" id="cmDuplicate">⊕ Duplicate</button>
+      <button class="cm-item" id="cmLock">⊘ Lock/Unlock</button>
+      <button class="cm-item" id="cmRotateCW">↻ Rotate CW</button>
+      <button class="cm-item" id="cmRotateCCW">↺ Rotate CCW</button>
+      <div class="cm-divider"></div>
+      <button class="cm-item cm-danger" id="cmDelete">✕ Delete</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Export -->
+  <aside class="export-panel" id="exportPanel">
+    <div class="panel-scroll">
+
+      <section class="cp-section">
+        <div class="cp-section-head"><span class="cp-section-num">16</span><h3>Export</h3></div>
+        <div class="export-format-grid">
+          <button class="export-fmt-btn active" data-fmt="svg">SVG</button>
+          <button class="export-fmt-btn" data-fmt="png">PNG</button>
+          <button class="export-fmt-btn" data-fmt="jpeg">JPEG</button>
+          <button class="export-fmt-btn" data-fmt="pdf">PDF</button>
+        </div>
+        <div class="export-info" id="exportInfo"><p>SVG — CorelDRAW 2018 compatible. Editable groups and clip paths.</p></div>
+        <div class="ctrl-inline" id="qualityRow" style="display:none">
+          <label>Quality</label>
+          <div class="range-row"><input type="range" class="ctrl-range" id="exportQuality" value="95" min="50" max="100"/><span class="range-val" id="exportQualityVal">95%</span></div>
+        </div>
+        <div class="ctrl-inline">
+          <label>Export Options</label>
+          <div class="export-option-checks">
+            <label class="check-label"><input type="checkbox" id="exportCropMarks"/> Crop Marks</label>
+            <label class="check-label"><input type="checkbox" id="exportBleed"/> Bleed (0.125")</label>
+            <label class="check-label"><input type="checkbox" id="exportIndividual"/> Individual Frames</label>
+          </div>
+        </div>
+        <button class="btn-generate btn-export" id="downloadBtn" disabled><span class="btn-gen-icon">↓</span><span>Download</span></button>
+        <button class="btn-ghost btn-full mt8" id="copyClipboardBtn" disabled>Copy to Clipboard</button>
+        <button class="btn-ghost btn-full mt8" id="printBtn" disabled>Print</button>
+      </section>
+
+      <!-- Stats -->
+      <section class="cp-section" id="statsSection" style="display:none">
+        <div class="cp-section-head"><span class="cp-section-num">★</span><h3>Layout Info</h3></div>
+        <div class="stat-grid">
+          <div class="stat-item"><span class="stat-label">Frames</span><span class="stat-val" id="statFrames">—</span></div>
+          <div class="stat-item"><span class="stat-label">Page</span><span class="stat-val" id="statPage">—</span></div>
+          <div class="stat-item"><span class="stat-label">Style</span><span class="stat-val" id="statStyle">—</span></div>
+          <div class="stat-item"><span class="stat-label">Images</span><span class="stat-val" id="statImages">—</span></div>
+        </div>
+        <div class="auto-save-indicator" id="autoSaveIndicator">Auto-saved ✓</div>
+      </section>
+
+      <!-- Share -->
+      <section class="cp-section" id="shareSection" style="display:none">
+        <div class="cp-section-head"><span class="cp-section-num">⇗</span><h3>Share</h3></div>
+        <button class="btn-ghost btn-full" id="shareSettingsBtn">Share Settings Link</button>
+        <div class="share-link-box" id="shareLinkBox" style="display:none">
+          <input type="text" class="ctrl-input" id="shareLinkInput" readonly/>
+          <button class="btn-primary btn-sm" id="copyShareLink">Copy</button>
+        </div>
+      </section>
+
+    </div>
+  </aside>
+
+</main>
+
+<!-- Past Works Section -->
+<section class="past-works-section" id="past-works">
+  <div class="pw-header">
+    <div><h2>Past Works</h2><p>Previously generated layouts, saved locally in your browser.</p></div>
+    <button class="btn-ghost" id="clearPastWorksBtn">Clear All</button>
+  </div>
+  <div class="pw-grid" id="pastWorksGrid">
+    <div class="pw-empty" id="pwEmpty"><span>No saved layouts yet.</span></div>
+  </div>
+</section>
+
+<!-- Error Toast -->
+<div class="error-toast" id="errorToast">
+  <span class="et-icon">⚠</span>
+  <span class="et-msg" id="errorMsg">Error</span>
+  <button class="et-close" id="errorClose">✕</button>
+</div>
+
+<!-- Success Toast -->
+<div class="success-toast" id="successToast">
+  <span class="et-icon">✓</span>
+  <span class="et-msg" id="successMsg">Done!</span>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
